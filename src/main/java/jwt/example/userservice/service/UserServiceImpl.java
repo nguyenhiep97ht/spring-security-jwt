@@ -2,6 +2,7 @@ package jwt.example.userservice.service;
 
 import jwt.example.userservice.domain.User;
 import jwt.example.userservice.domain.Role;
+import jwt.example.userservice.dto.UserDto;
 import jwt.example.userservice.repo.RoleRepo;
 import jwt.example.userservice.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,8 +75,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<UserDto> getUsers() {
         log.info("fetching all users");
-        return userRepo.findAll();
+        List<User> users = userRepo.findAll();
+        return users.stream().map(user -> UserDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .name(user.getName())
+                .build()).collect(Collectors.toList());
     }
 }
