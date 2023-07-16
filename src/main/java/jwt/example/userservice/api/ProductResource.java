@@ -4,7 +4,8 @@ import jwt.example.userservice.domain.Product;
 import jwt.example.userservice.domain.ProductForm;
 import jwt.example.userservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
+
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Slf4j
+@Log4j2
 public class ProductResource {
   private final ProductService productService;
 
