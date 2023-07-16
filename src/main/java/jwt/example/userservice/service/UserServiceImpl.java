@@ -23,58 +23,58 @@ import java.util.List;
 @Transactional
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
-  private final UserRepo userRepo;
-  private final RoleRepo roleRepo;
-  
-  private final PasswordEncoder passwordEncoder;
+    private final UserRepo userRepo;
+    private final RoleRepo roleRepo;
 
-  @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    System.out.println("user login step: " + 2);
-    User user = userRepo.findByUsername(username);
-    if (user == null) {
-      log.error("user not found in the database");
-      throw new UsernameNotFoundException("User not found in the database");
-    } else {
-      log.info("user found in the database {}", username);
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        //   System.out.println("user login step: " + 2);
+        User user = userRepo.findByUsername(username);
+        if (user == null) {
+            log.error("user not found in the database");
+            throw new UsernameNotFoundException("User not found in the database");
+        } else {
+            log.info("user found in the database {}", username);
+        }
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        user.getRoles().forEach(role ->
+                authorities.add(new SimpleGrantedAuthority(role.getName()))
+        );
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
-    Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-    user.getRoles().forEach(role -> {
-      authorities.add(new SimpleGrantedAuthority(role.getName()));
-    });
-    return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
-  }
 
-  @Override
-  public User saveUser(User user) {
-    log.info("saving new user {} to the database", user.getName());
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    return userRepo.save(user);
-  }
+    @Override
+    public User saveUser(User user) {
+        log.info("saving new user {} to the database", user.getName());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepo.save(user);
+    }
 
-  @Override
-  public Role saveRole(Role role) {
-    log.info("saving new role {} to the database", role.getName());
-    return roleRepo.save(role);
-  }
+    @Override
+    public Role saveRole(Role role) {
+        log.info("saving new role {} to the database", role.getName());
+        return roleRepo.save(role);
+    }
 
-  @Override
-  public void addRoleToUser(String username, String rolename) {
-    log.info("adding role {} to user {}", rolename, username);
-    User user = userRepo.findByUsername(username);
-    Role role = roleRepo.findByName(rolename);
-    user.getRoles().add(role);
-  }
+    @Override
+    public void addRoleToUser(String username, String rolename) {
+        log.info("adding role {} to user {}", rolename, username);
+        User user = userRepo.findByUsername(username);
+        Role role = roleRepo.findByName(rolename);
+        user.getRoles().add(role);
+    }
 
-  @Override
-  public User getUser(String username) {
-    log.info("fetching user {}", username);
-    return userRepo.findByUsername(username);
-  }
+    @Override
+    public User getUser(String username) {
+        log.info("fetching user {}", username);
+        return userRepo.findByUsername(username);
+    }
 
-  @Override
-  public List<User> getUsers() {
-    log.info("fetching all users");
-    return userRepo.findAll();
-  }
+    @Override
+    public List<User> getUsers() {
+        log.info("fetching all users");
+        return userRepo.findAll();
+    }
 }

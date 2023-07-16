@@ -25,41 +25,41 @@ import static org.springframework.http.HttpMethod.POST;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-  private final UserDetailsService userDetailsService;
-  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserDetailsService userDetailsService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    System.out.println("processing step: " + 2);
-    auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-  }
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        //  System.out.println("processing step: " + 2);
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    System.out.println("processing step: " + 3);
-    CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
-    customAuthenticationFilter.setFilterProcessesUrl("/api/login");
-    http.csrf().disable();
-    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh").permitAll();
-    http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROLE_USER");
-    http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
-    http.authorizeRequests().anyRequest().authenticated();
-    http.addFilter(customAuthenticationFilter);
-    http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-  }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        //  System.out.println("processing step: " + 3);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
+        http.csrf().disable();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh").permitAll();
+        http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().anyRequest().authenticated();
+        http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-      source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-      return source;
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        return source;
     }
-  
-  @Bean
-  @Override
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    System.out.println("processing step: " + 4);
-    return super.authenticationManagerBean();
-  }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        //  System.out.println("processing step: " + 4);
+        return super.authenticationManagerBean();
+    }
 }
