@@ -20,18 +20,17 @@ import java.net.URI;
 @RequestMapping("/api")
 @Log4j2
 public class ProductResource {
-  private final ProductService productService;
+    private final ProductService productService;
 
-  @GetMapping("/products")
-  public ResponseEntity<Page<Product>> getProducts(@RequestBody ProductForm form) {
-    return ResponseEntity.ok().body(productService.getProducts(form));
-  }
+    @PostMapping("/products")
+    public ResponseEntity<Page<Product>> getProducts(@RequestBody ProductForm form) {
+        return ResponseEntity.ok().body(productService.getProducts(form));
+    }
 
-  @PostMapping("/product/save")
-  public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
-    URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/product/save").toUriString());
-    return ResponseEntity.created(uri).body(productService.saveProduct(product));
-  }
+    @PostMapping("/product/save")
+    public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
+        return ResponseEntity.ok().body(productService.saveProduct(product));
+    }
 
 }
 
